@@ -139,11 +139,12 @@ input.tname{font-family:var(--f-display);font-size:33px;font-weight:700;color:va
 input.tname:focus{outline:none;border-bottom-color:var(--rose);border-bottom-style:solid}
 
 /* ---- bìa ---- */
-.cover{padding:0;flex-direction:row;background:var(--blush)}
-.cover .pic{width:880px;flex:none;position:relative;overflow:hidden}
-.cover .pic img{width:100%;height:100%;object-fit:cover;object-position:18% center;display:block}
-.cover .pic .fade{position:absolute;inset:0 0 0 auto;width:170px;background:linear-gradient(90deg,rgba(251,236,240,0),var(--blush))}
-.cover .txt{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:0 76px 0 44px}
+.cover{padding:0;display:block;background:var(--blush)}
+.cover .full{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.cover .band{position:absolute;left:0;right:0;bottom:0;padding:170px 76px 58px;display:flex;align-items:flex-end;justify-content:space-between;gap:36px;
+  background:linear-gradient(180deg,rgba(251,244,234,0) 0%,rgba(251,244,234,.72) 42%,rgba(251,244,234,.95) 72%,rgba(251,244,234,.99) 100%)}
+.cover .band .l{min-width:0}
+.cover .band .r{text-align:right;flex:none}
 
 /* ---- thanh điều khiển ---- */
 #bar{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
@@ -517,15 +518,16 @@ function buildSlides(){
 
   /* 1 — bìa */
   sl.push({title:"Chúc mừng 20/10", cls:"cover", html:
-     '<div class="pic"><img src="assets/cover.png" alt="Minh hoạ cô gái ôm bó hoa mừng Ngày Phụ nữ Việt Nam"><div class="fade"></div></div>'
-    +'<div class="txt">'
-    +'<p class="eyebrow" style="margin-bottom:12px">Ngày Phụ nữ Việt Nam · 20 tháng 10</p>'
-    +'<h1 style="font-size:86px;line-height:1">Game Show</h1>'
-    +'<p class="script" style="font-size:76px;line-height:1.1;margin-top:-2px">của phòng mình</p>'
-    +'<p style="font-size:26px;margin-top:26px;max-width:500px">Hai vòng thi · Ba đội · Mười hai người</p>'
-    +'<p style="font-size:26px;margin-top:8px;max-width:500px">Tổng giải thưởng <span class="hl gold">1.500.000đ</span></p>'
-    +'<p class="muted" style="margin-top:26px;font-size:19px">Bấm <b>→</b> để bắt đầu · <b>F</b> để toàn màn hình</p>'
-    +'</div>'});
+     '<img class="full" src="assets/cover.png" alt="Thiệp chúc mừng Ngày Phụ nữ Việt Nam 20/10: chúc tất cả chị em phụ nữ luôn xinh đẹp, mạnh khoẻ, luôn được yêu thương và trân trọng">'
+    +'<div class="band">'
+    +'<div class="l">'
+      +'<p class="script" style="font-size:52px;line-height:1.05">Game show của phòng mình</p>'
+      +'<p style="font-size:25px;margin-top:6px">Hai vòng thi · Ba đội · Mười hai người</p>'
+    +'</div>'
+    +'<div class="r">'
+      +'<p style="font-size:25px">Tổng giải thưởng <span class="hl gold">1.500.000đ</span></p>'
+      +'<p class="muted" style="font-size:19px;margin-top:8px">Bấm <b>→</b> để bắt đầu · <b>F</b> để toàn màn hình</p>'
+    +'</div></div>'});
 
   /* 2 — lời chúc */
   sl.push({title:"Lời chúc", cls:"photo", html: photoBg()+
@@ -771,8 +773,15 @@ function drawZone(){
   z.innerHTML=h;
 }
 
-function fit(){ stage.style.transform = "scale("+Math.min(window.innerWidth/1600, window.innerHeight/900)+")"; }
+function fit(){
+  var bar = document.getElementById("bar");
+  var bh = (bar && !bar.classList.contains("hide")) ? bar.offsetHeight : 0;
+  document.body.style.paddingBottom = bh + "px";
+  var avail = window.innerHeight - bh;
+  stage.style.transform = "scale(" + Math.min(window.innerWidth/1600, avail/900) + ")";
+}
 window.addEventListener("resize", fit);
+document.addEventListener("fullscreenchange", fit);
 
 stage.addEventListener("click", function(e){
   var b = e.target.closest ? e.target.closest("[data-act]") : null;
@@ -829,7 +838,7 @@ document.addEventListener("keydown", function(e){
   else if(e.key==="Home"){ show(0); }
   else if(e.key==="End"){ show(SLIDES.length-1); }
   else if(e.key==="f"||e.key==="F"){ toggleFs(); }
-  else if(e.key==="h"||e.key==="H"){ document.getElementById("bar").classList.toggle("hide"); }
+  else if(e.key==="h"||e.key==="H"){ document.getElementById("bar").classList.toggle("hide"); fit(); }
 });
 function toggleFs(){
   if(document.fullscreenElement) document.exitFullscreen();
@@ -838,7 +847,7 @@ function toggleFs(){
 document.getElementById("prev").onclick=function(){ show(cur-1); };
 document.getElementById("next").onclick=function(){ show(cur+1); };
 document.getElementById("fs").onclick=toggleFs;
-document.getElementById("hidebar").onclick=function(){ document.getElementById("bar").classList.add("hide"); };
+document.getElementById("hidebar").onclick=function(){ document.getElementById("bar").classList.add("hide"); fit(); };
 document.getElementById("reset").onclick=function(){ S=JSON.parse(JSON.stringify(DEFAULT_STATE)); save(); render(0); };
 
 /* YouTube từ chối nhúng khi trang mở bằng file:// — báo cho người dùng biết đường chạy đúng */
