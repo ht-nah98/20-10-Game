@@ -387,11 +387,7 @@ function finalBoard(){
       +'<td class="n">'+(finalPts(i)?'<b style="color:var(--gold);font-size:28px">+2</b>':'—')+'</td>'
       +'<td class="n"><b style="font-size:36px;color:var(--rose)">'+totalPts(i)+'</b></td></tr>';
   }
-  h+='</table><div class="flexfill"></div>'
-   +'<div class="card sage" style="flex-direction:row;align-items:center;gap:26px">'
-   +'<span class="step" style="width:62px;height:62px;font-size:30px">!</span>'
-   +'<div><h3 style="color:var(--sage)">Chưa trao giải ở đây</h3>'
-   +'<p style="font-size:23px;margin-top:6px">Đây mới là điểm sau Game 1. Giải Nhất / Nhì / Ba quyết sau khi cộng cả Game 2. Hoà sau <span class="hl sage">cả hai game</span> thì đội tổng lỗi ít hơn thắng.</p></div></div>';
+  h+='</table><div class="flexfill"></div>';
   return {title:"Tổng kết Game 1", html:h, dyn:"finalBoard"};
 }
 
@@ -478,9 +474,6 @@ function g2Score(){
       +'<div class="prow g"><span>Còn đóng từ 4 hàng</span><b>+3</b></div>'
       +'<div class="prow g"><span>Còn đóng 2–3 hàng</span><b>+2</b></div>'
       +'<div class="prow"><span>Còn 1 hàng hoặc đã mở hết</span><b>+1</b></div></div></div>'
-    +'<div class="card sage" style="flex:1"><h3 style="color:var(--sage)">Vì sao vẫn lật được</h3>'
-      +'<p style="font-size:24px;margin-top:4px">Sau Game 1 hai đội cách nhau nhiều nhất <b>4 điểm</b>. Game 2 cho một đội tới <b>5–6 điểm</b>.</p>'
-      +'<p style="font-size:24px;margin-top:10px"><span class="hl sage">Đội đang bét vẫn vô địch được</span> — nhưng phải dám đoán sớm.</p></div>'
     +'</div></div>'};
 }
 
@@ -535,11 +528,12 @@ function buildSlides(){
     +'<p class="script" style="font-size:62px;line-height:1.1">Gửi mười hai người</p>'
     +'<h1 style="font-size:70px;max-width:1280px;line-height:1.12">Một năm qua, phòng mình đi được đến hôm nay là nhờ những người đang ngồi đây.</h1>'
     +'<div style="display:flex;gap:40px;max-width:1340px;margin-top:6px">'
-    +'<p style="font-size:26px;flex:1">Người nhớ giúp cả phòng những thứ chẳng ai nhớ nổi.</p>'
-    +'<p style="font-size:26px;flex:1">Người ở lại thêm một chút mà không đợi ai phải nhờ.</p>'
-    +'<p style="font-size:26px;flex:1">Người làm một ngày khó trở nên dễ thở hơn, chỉ bằng cách có mặt.</p>'
+    +'<p style="font-size:25px;flex:1">Người nhớ giúp cả phòng những thứ chẳng ai nhớ nổi — rồi chưa một lần kể công.</p>'
+    +'<p style="font-size:25px;flex:1">Người ở lại thêm một chút mà không đợi ai phải nhờ, xong về nhà lại vào ca nữa.</p>'
+    +'<p style="font-size:25px;flex:1">Người làm một ngày khó trở nên dễ thở hơn, chỉ bằng cách có mặt và cười một cái.</p>'
     +'</div>'
-    +'<p style="font-size:30px;margin-top:14px;max-width:1280px">Hôm nay không nói chuyện công việc nữa. Chúc các chị em một ngày <span class="hl">được nghỉ, được chiều, và được nghe cảm ơn đủ nhiều.</span></p>'
+    +'<p style="font-size:28px;margin-top:10px;max-width:1340px">Hôm nay không nói chuyện công việc nữa. Chúc các chị em một ngày <span class="hl">được nghỉ, được chiều, và được nghe cảm ơn đủ nhiều</span> — rồi một năm tới nhẹ hơn năm vừa rồi.</p>'
+    +'<p class="script" style="font-size:46px;margin-top:6px">Cả phòng thương các chị em nhiều lắm</p>'
     +'</div>'});
 
   /* 3 — chương trình */
@@ -552,9 +546,9 @@ function buildSlides(){
     +'<div class="card key" style="flex:1"><span class="step">02</span><h3>Game 1 — Nói theo nhịp</h3>'
       +'<p style="font-size:23px">Ba lượt thi riêng, rồi một vòng chung kết <span class="hl">đọc đồng thanh loại trực tiếp</span>.</p>'
       +'<span class="meta">khoảng 15–18 phút</span></div>'
-    +'<div class="card sage" style="flex:1"><span class="step">03</span><h3 style="color:var(--sage)">Game 2</h3>'
-      +'<p style="font-size:23px">Đang chuẩn bị. Điểm <span class="hl sage">hai game cộng lại</span> mới ra đội vô địch.</p>'
-      +'<span class="meta">sẽ cập nhật</span></div>'
+    +'<div class="card sage" style="flex:1"><span class="step">03</span><h3 style="color:var(--sage)">Game 2 — Giải ô chữ</h3>'
+      +'<p style="font-size:23px">Bảy hàng ngang, một cột khoá. <span class="hl sage">Đoán sớm được nhiều điểm hơn</span>, nên đội đang thua vẫn còn cửa.</p>'
+      +'<span class="meta">khoảng 15–18 phút</span></div>'
     +'<div class="card gold" style="flex:1"><span class="step">04</span><h3 style="color:var(--gold)">Trao giải</h3>'
       +'<div style="display:flex;flex-direction:column;gap:7px;margin-top:2px">'
       +'<div class="prow g"><span>Giải Nhất</span><b>600.000đ</b></div>'
@@ -573,17 +567,13 @@ function buildSlides(){
   sl.push({title:"Giải thưởng", html:
      '<p class="eyebrow">Tổng giải thưởng 1.500.000đ</p><h2>Không đội nào ra về tay trắng</h2>'
     +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%;align-items:stretch">'
-    +'<div class="card gold" style="flex:1;gap:8px"><span class="pill gold">Giải Nhất</span>'
-      +'<div class="num" style="font-size:78px;color:var(--gold);margin-top:10px">600.000đ</div>'
-      +'<p style="font-size:23px">Mỗi người nhận <span class="hl gold">150.000đ</span></p></div>'
-    +'<div class="card" style="flex:1;gap:8px"><span class="pill">Giải Nhì</span>'
-      +'<div class="num" style="font-size:78px;margin-top:10px">500.000đ</div>'
-      +'<p style="font-size:23px">Mỗi người nhận <span class="hl">125.000đ</span></p></div>'
-    +'<div class="card sage" style="flex:1;gap:8px"><span class="pill">Giải Ba</span>'
-      +'<div class="num" style="font-size:78px;color:var(--sage);margin-top:10px">400.000đ</div>'
-      +'<p style="font-size:23px">Mỗi người nhận <span class="hl sage">100.000đ</span></p></div>'
-    +'</div></div>'
-    +'<p class="muted">Chênh lệch giữa nhất và ba chỉ <b style="color:var(--rose)">50.000đ mỗi người</b>. Chơi cho vui là chính — nhưng vẫn phải thắng.</p>'});
+    +'<div class="card gold" style="flex:1;gap:10px;align-items:flex-start"><span class="pill gold">Giải Nhất</span>'
+      +'<div class="num" style="font-size:86px;color:var(--gold);margin-top:8px">600.000đ</div></div>'
+    +'<div class="card" style="flex:1;gap:10px;align-items:flex-start"><span class="pill">Giải Nhì</span>'
+      +'<div class="num" style="font-size:86px;margin-top:8px">500.000đ</div></div>'
+    +'<div class="card sage" style="flex:1;gap:10px;align-items:flex-start"><span class="pill">Giải Ba</span>'
+      +'<div class="num" style="font-size:86px;color:var(--sage);margin-top:8px">400.000đ</div></div>'
+    +'</div></div>'});
 
   /* 6 — Game 1 */
   sl.push({title:"Game 1", cls:"photo", html: photoBg()+
@@ -699,10 +689,12 @@ function buildSlides(){
 
   /* 24 — cảm ơn */
   sl.push({title:"Cảm ơn", cls:"photo", html: photoBg()+
-     '<div class="inner" style="justify-content:center;align-items:center;text-align:center;gap:26px">'
-    +'<p class="script" style="font-size:84px">Cảm ơn các chị em</p>'
-    +'<h1 style="font-size:66px;max-width:1180px">Chúc mừng Ngày Phụ nữ Việt Nam 20 tháng 10</h1>'
-    +'<p style="font-size:28px;max-width:960px">Mong năm nào phòng mình cũng ồn ào được như hôm nay.</p></div>'});
+     '<div class="inner" style="justify-content:center;align-items:center;text-align:center;gap:22px">'
+    +'<p class="script" style="font-size:72px">Cảm ơn các chị em</p>'
+    +'<h1 style="font-size:60px;max-width:1240px">Chúc các chị em mạnh khoẻ, xinh đẹp, và được yêu thương mỗi ngày — chứ không chỉ hôm nay</h1>'
+    +'<p style="font-size:27px;max-width:1100px">Hôm nay cả phòng cười nhiều hơn mọi ngày. Mong 364 ngày còn lại trong năm, các chị em cũng được đối xử dịu dàng đúng như thế.</p>'
+    +'<p style="font-size:27px;max-width:1100px">Và mong năm sau mình lại ngồi đây, ồn ào y hệt hôm nay.</p>'
+    +'<p class="script" style="font-size:58px;margin-top:4px">Chúc mừng 20/10</p></div>'});
 
   return sl;
 }
