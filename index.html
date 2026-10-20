@@ -41,9 +41,10 @@ body{background:#F3EDE8;color:var(--ink);font-family:var(--f-body);overflow:hidd
 
 /* ---- slide nền ảnh blur ---- */
 .slide.photo{color:#FFF8F4}
+.photo h1,.photo h2,.photo h3,.photo p{text-shadow:0 2px 16px rgba(74,14,40,.42)}
 .bg{position:absolute;inset:0;overflow:hidden}
-.bg img{width:100%;height:100%;object-fit:cover;object-position:28% center;filter:blur(26px) saturate(1.12) brightness(1.02);transform:scale(1.18)}
-.bg .scrim{position:absolute;inset:0;background:linear-gradient(115deg,rgba(52,10,26,.84) 0%,rgba(92,18,44,.76) 48%,rgba(120,34,64,.70) 100%)}
+.bg img{width:100%;height:100%;object-fit:cover;object-position:28% center;filter:blur(46px) saturate(1.3) brightness(1.06);transform:scale(1.28)}
+.bg .scrim{position:absolute;inset:0;background:linear-gradient(118deg,rgba(134,32,76,.82) 0%,rgba(172,54,104,.76) 46%,rgba(198,86,130,.72) 100%)}
 .photo .inner{position:relative;flex:1;display:flex;flex-direction:column;min-height:0}
 
 /* ---- chữ ---- */
@@ -55,18 +56,18 @@ p{font-size:25px;line-height:1.55;margin:0;color:var(--ink)}
 .photo h3{color:#FFD9E2}
 .photo p{color:#FBE6EC}
 .eyebrow{font-size:18px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin:0 0 16px}
-.photo .eyebrow{color:#F0BDCC}
+.photo .eyebrow{color:#FBD0DC}
 .script{font-family:var(--f-script);font-weight:700;color:var(--rose)}
 .photo .script{color:#FFD2DF}
 .muted{color:var(--ink-soft);font-size:21px}
-.photo .muted{color:#F3D5DF}
+.photo .muted{color:#F8E2E9}
 .flexfill{flex:1}
 
 /* bút dạ quang - nhấn từ khoá */
 .hl{background:linear-gradient(transparent 55%,var(--rose-soft) 55%);padding:0 2px;font-weight:700;color:var(--rose-deep);-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .hl.sage{background:linear-gradient(transparent 55%,var(--sage-soft) 55%);color:var(--sage)}
 .hl.gold{background:linear-gradient(transparent 55%,var(--gold-soft) 55%);color:var(--gold)}
-.photo .hl{background:rgba(255,214,226,.22);border-radius:6px;color:#FFE8EE}
+.photo .hl{background:rgba(255,224,234,.26);border-radius:6px;color:#FFF0F4}
 
 /* ---- thẻ ---- */
 .row{display:flex;gap:24px}
