@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Show 20/10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Dancing+Script:wght@600;700&display=swap">
+<style>
+/* Layout: sân khấu cố định 1600x900 scale vừa màn hình.
+   Hai loại nền: kem sáng (slide nội dung) và ảnh bìa blur phủ scrim ấm (slide tuyên bố). */
+:root{
+  --rose:#B03055;
+  --rose-deep:#7E1C3C;
+  --rose-soft:#EEC6D1;
+  --rose-line:#E5B6C4;
+  --blush:#FBECF0;
+  --sage:#55704A;
+  --sage-soft:#DEE8D6;
+  --cream:#FCF8F4;
+  --paper:#FFFFFF;
+  --ink:#332A2D;
+  --ink-soft:#786A6E;
+  --gold:#A8771F;
+  --gold-soft:#F6E9CE;
+  --shadow:0 14px 38px rgba(126,28,60,.10);
+  --shadow-lift:0 22px 54px rgba(126,28,60,.16);
+  --f-display:"Playfair Display",Georgia,serif;
+  --f-script:"Dancing Script","Brush Script MT",cursive;
+  --f-body:"Be Vietnam Pro","Segoe UI",Tahoma,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:#F3EDE8;color:var(--ink);font-family:var(--f-body);overflow:hidden;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;width:1600px;height:900px;transform-origin:center center;flex:none;box-shadow:0 0 0 1px rgba(126,28,60,.08)}
+.slide{position:absolute;inset:0;padding:68px 84px;display:none;flex-direction:column;background:var(--cream);overflow:hidden}
+.slide.on{display:flex}
+.slide.tint{background:linear-gradient(160deg,#FCF8F4 0%,#FBECF0 100%)}
+
+/* ---- slide nền ảnh blur ---- */
+.slide.photo{color:#FFF8F4}
+.bg{position:absolute;inset:0;overflow:hidden}
+.bg img{width:100%;height:100%;object-fit:cover;object-position:28% center;filter:blur(26px) saturate(1.12) brightness(1.02);transform:scale(1.18)}
+.bg .scrim{position:absolute;inset:0;background:linear-gradient(115deg,rgba(52,10,26,.84) 0%,rgba(92,18,44,.76) 48%,rgba(120,34,64,.70) 100%)}
+.photo .inner{position:relative;flex:1;display:flex;flex-direction:column;min-height:0}
+
+/* ---- chữ ---- */
+h1{font-family:var(--f-display);font-size:92px;font-weight:700;line-height:1.04;margin:0;color:var(--rose-deep);text-wrap:balance}
+h2{font-family:var(--f-display);font-size:58px;font-weight:600;line-height:1.1;margin:0;color:var(--rose-deep);text-wrap:balance}
+h3{font-size:29px;font-weight:700;margin:0;line-height:1.25;color:var(--rose-deep)}
+p{font-size:25px;line-height:1.55;margin:0;color:var(--ink)}
+.photo h1,.photo h2{color:#FFF6F2}
+.photo h3{color:#FFD9E2}
+.photo p{color:#FBE6EC}
+.eyebrow{font-size:18px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin:0 0 16px}
+.photo .eyebrow{color:#F0BDCC}
+.script{font-family:var(--f-script);font-weight:700;color:var(--rose)}
+.photo .script{color:#FFD2DF}
+.muted{color:var(--ink-soft);font-size:21px}
+.photo .muted{color:#F3D5DF}
+.flexfill{flex:1}
+
+/* bút dạ quang - nhấn từ khoá */
+.hl{background:linear-gradient(transparent 55%,var(--rose-soft) 55%);padding:0 2px;font-weight:700;color:var(--rose-deep);-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hl.sage{background:linear-gradient(transparent 55%,var(--sage-soft) 55%);color:var(--sage)}
+.hl.gold{background:linear-gradient(transparent 55%,var(--gold-soft) 55%);color:var(--gold)}
+.photo .hl{background:rgba(255,214,226,.22);border-radius:6px;color:#FFE8EE}
+
+/* ---- thẻ ---- */
+.row{display:flex;gap:24px}
+.card{background:var(--paper);border:1.5px solid var(--rose-line);border-radius:20px;padding:30px 30px 32px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px}
+.card.sage{border-color:#C9D8BD;background:#FBFDF9}
+.card.gold{border-color:#E6CE9C;background:#FFFCF5;box-shadow:var(--shadow-lift)}
+.card.key{border-width:2.5px;border-color:var(--rose);box-shadow:var(--shadow-lift)}
+.step{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;flex:none;border-radius:50%;
+  background:var(--blush);color:var(--rose);font-family:var(--f-display);font-size:26px;font-weight:700;border:1.5px solid var(--rose-line)}
+.card.sage .step{background:var(--sage-soft);color:var(--sage);border-color:#C9D8BD}
+.card.gold .step{background:var(--gold-soft);color:var(--gold);border-color:#E6CE9C}
+.meta{font-size:17px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-top:auto;padding-top:8px}
+.num{font-family:var(--f-display);font-size:58px;font-weight:700;color:var(--rose);line-height:1}
+
+/* dòng giải thưởng */
+.prow{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:9px 14px;border-radius:11px;background:var(--blush)}
+.prow.g{background:var(--gold-soft)}
+.prow span{font-size:21px;font-weight:600;color:var(--ink);white-space:nowrap}
+.prow b{font-family:var(--f-display);font-size:30px;color:var(--rose-deep);font-variant-numeric:tabular-nums}
+.prow.g b{color:var(--gold)}
+
+/* ---- bảng ---- */
+table{border-collapse:collapse;width:100%;font-size:25px}
+th,td{padding:14px 16px;text-align:left;border-bottom:1.5px solid var(--rose-line)}
+th{font-size:18px;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);font-weight:700}
+td.n,th.n{text-align:center;font-variant-numeric:tabular-nums}
+tr.lead td{background:var(--blush);font-weight:700;color:var(--rose-deep)}
+tr.lead td:first-child{border-left:5px solid var(--rose)}
+.pill{display:inline-block;padding:6px 18px;border-radius:999px;font-size:19px;font-weight:700;background:var(--sage-soft);color:var(--sage)}
+.pill.gold{background:var(--gold-soft);color:var(--gold)}
+
+/* ---- video ---- */
+.vidwrap{flex:1;display:flex;gap:26px;min-height:0;margin-top:14px}
+.vidbox{flex:1;min-width:0;background:#150D11;border-radius:18px;overflow:hidden;position:relative;border:2.5px solid var(--rose-line)}
+.vidbox iframe{width:100%;height:100%;border:0;display:block}
+.vidph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#F0BDCC;text-align:center;padding:36px}
+
+/* ---- đếm lỗi ---- */
+.counter{width:412px;flex:none;display:flex;flex-direction:column;gap:12px}
+.crow{display:flex;align-items:center;gap:11px;background:var(--paper);border:1.5px solid var(--rose-line);border-radius:15px;padding:11px 13px}
+.crow .lv{flex:1;min-width:0}
+.crow .lv b{display:block;font-size:21px;color:var(--rose-deep)}
+.crow .lv span{font-size:16px;color:var(--ink-soft)}
+.cnt{font-family:var(--f-display);font-size:38px;font-weight:700;min-width:54px;text-align:center;color:var(--rose);font-variant-numeric:tabular-nums}
+button{font-family:var(--f-body);cursor:pointer}
+.bq{width:44px;height:44px;flex:none;border-radius:50%;border:2px solid var(--rose);background:var(--paper);color:var(--rose);font-size:25px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center}
+.bq:hover{background:var(--rose);color:#fff}
+.bq:active{transform:scale(.93)}
+.total{display:flex;align-items:baseline;justify-content:space-between;background:var(--rose);border-radius:15px;padding:13px 20px}
+.total span{font-size:21px;font-weight:700;color:#FFE3EB}
+.total b{font-family:var(--f-display);font-size:44px;color:#fff}
+
+/* ---- nút ---- */
+.btn{border:2px solid var(--rose);background:var(--rose);color:#fff;border-radius:999px;padding:13px 30px;font-size:21px;font-weight:600;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--rose-deep);border-color:var(--rose-deep)}
+.btn.ghost{background:var(--paper);color:var(--rose)}
+.btn.ghost:hover{background:var(--blush)}
+.btn.sm{padding:8px 19px;font-size:18px}
+
+/* ---- bốc thăm ---- */
+.draw{display:flex;gap:26px;align-items:stretch}
+.drawcard{flex:1;background:var(--paper);border:2.5px dashed var(--rose-line);border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:34px 26px;text-align:center}
+.drawcard.done{border-style:solid;border-color:var(--rose);background:var(--blush);box-shadow:var(--shadow-lift)}
+.drawcard .tn{font-family:var(--f-display);font-size:36px;font-weight:700;color:var(--rose-deep);line-height:1.15}
+.drawcard .vv{font-size:28px;font-weight:700;color:var(--sage);min-height:38px}
+.drawcard.done .vv{color:var(--rose)}
+
+input.tname{font-family:var(--f-display);font-size:33px;font-weight:700;color:var(--rose-deep);border:0;border-bottom:2px dashed var(--rose-line);background:transparent;width:100%;padding:4px 2px}
+input.tname:focus{outline:none;border-bottom-color:var(--rose);border-bottom-style:solid}
+
+/* ---- bìa ---- */
+.cover{padding:0;flex-direction:row;background:var(--blush)}
+.cover .pic{width:880px;flex:none;position:relative;overflow:hidden}
+.cover .pic img{width:100%;height:100%;object-fit:cover;object-position:18% center;display:block}
+.cover .pic .fade{position:absolute;inset:0 0 0 auto;width:170px;background:linear-gradient(90deg,rgba(251,236,240,0),var(--blush))}
+.cover .txt{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:0 76px 0 44px}
+
+/* ---- thanh điều khiển ---- */
+#bar{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+  padding:9px max(16px,env(safe-area-inset-left,0px)) calc(9px + env(safe-area-inset-bottom,0px));
+  background:rgba(252,248,244,.95);border-top:1px solid var(--rose-line);font-size:15px;color:var(--ink-soft);z-index:20}
+#bar.hide{display:none}
+#bar .nav{display:flex;align-items:center;gap:8px}
+#bar button{border:1px solid var(--rose-line);background:#fff;color:var(--rose);border-radius:999px;padding:6px 15px;font-size:15px;font-weight:600}
+#bar button:hover{background:var(--blush)}
+#pos{font-variant-numeric:tabular-nums;font-weight:700;color:var(--rose-deep);min-width:56px;text-align:center}
+#stitle{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#warn{position:fixed;left:50%;transform:translateX(-50%);top:14px;z-index:30;max-width:820px;
+  background:#FFF4D6;border:2px solid #E0B457;color:#6B4A0C;border-radius:14px;padding:14px 20px;font-size:17px;line-height:1.5;box-shadow:0 10px 30px rgba(0,0,0,.14)}
+#warn b{color:#4A3206}
+#warn code{background:#F6E6BE;padding:2px 7px;border-radius:5px;font-size:16px}
+#warn button{margin-left:10px;border:1px solid #C9A04A;background:#fff;color:#6B4A0C;border-radius:999px;padding:5px 14px;font-size:15px;font-weight:600}
+
+/* ---- ô chữ Game 2 ---- */
+.xgrid{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+.xrow{display:flex;align-items:center;gap:5px}
+.xno{width:40px;height:52px;flex:none;border-radius:10px;border:2px solid var(--rose-line);background:var(--paper);
+  color:var(--rose);font-family:var(--f-display);font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0}
+.xno:hover{background:var(--blush)}
+.xno.cur{background:var(--rose);border-color:var(--rose);color:#fff}
+.xno.done{border-color:var(--sage);color:var(--sage);background:var(--sage-soft)}
+.xpad{flex:none}
+.xc{width:52px;height:52px;flex:none;border:2px solid var(--rose-line);border-radius:8px;background:var(--paper);
+  display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:28px;font-weight:700;color:var(--rose-deep)}
+.xc.key{background:var(--gold-soft);border-color:var(--gold);border-width:2.5px;color:var(--gold)}
+.xc.hid{color:transparent}
+.xclue{background:var(--paper);border:2.5px solid var(--rose);border-radius:16px;padding:18px 24px;display:flex;gap:20px;align-items:flex-start}
+.xclue .qn{font-family:var(--f-display);font-size:38px;font-weight:700;color:var(--rose);flex:none;line-height:1}
+.xbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.g2t{display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--rose-line);border-radius:13px;padding:7px 10px}
+.g2t .nmx{font-size:19px;font-weight:600;color:var(--rose-deep);max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.g2t .vx{font-family:var(--f-display);font-size:28px;font-weight:700;color:var(--rose);min-width:34px;text-align:center}
+.bq.s{width:34px;height:34px;font-size:20px}
+:focus-visible{outline:3px solid var(--sage);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="warn" hidden></div>
+
+<div id="bar">
+  <div class="nav">
+    <button id="prev" title="Phím ←">←</button>
+    <span id="pos">1/20</span>
+    <button id="next" title="Phím → hoặc Space">→</button>
+  </div>
+  <span id="stitle"></span>
+  <button id="fs">Toàn màn hình (F)</button>
+  <button id="hidebar">Ẩn thanh này (H)</button>
+  <button id="reset">Xoá điểm</button>
+</div>
+
+<script>
+/* ===================== DỮ LIỆU ===================== */
+var VIDEOS = [
+  {id:"kDDoUg48evk", label:"Phần 16"},
+  {id:"EpmeBnAcmk0", label:"Phần 17"},
+  {id:"5VSq4PVu690", label:"Phần 18"}
+];
+var FINAL = {id:"kvjqU6M7HbU", label:"Cực khó · 90% không qua nổi Level 2"};
+var SPARE = [
+  {id:"XSkQtSnOCGA", label:"Phần 19", note:"Thay cho một video vòng 1"},
+  {id:"vjayoC9JNTU", label:"Phần 20", note:"Thay cho một video vòng 1"},
+  {id:"qqDveqc6EZA", label:"Cao thủ mới qua Level 3", note:"Thay cho video chung kết"}
+];
+
+/* Ô chữ Game 2 — bảy phụ nữ Việt Nam, cột khoá đọc dọc ra TÔN VINH.
+   cells = chữ trong ô (bỏ dấu thanh, giữ ă â ê ô ơ ư đ). k = vị trí ô khoá (1-based). */
+var PUZZLE = [
+ {k:1,  ans:"TRIỆU THỊ TRINH", cells:["T","R","I","Ê","U","T","H","I","T","R","I","N","H"],
+  clue:"Tên thật của Bà Triệu — nữ anh hùng quê Thanh Hoá, khởi nghĩa chống quân Đông Ngô năm 248.",
+  src:"Báo Pháp Luật · Báo Văn Hoá"},
+ {k:3,  ans:"NGÔ THỊ TUYỂN", cells:["N","G","Ô","T","H","I","T","U","Y","Ê","N"],
+  clue:"Nữ dân quân Nam Ngạn vác hai hòm đạn nặng khoảng 98kg để tiếp đạn bảo vệ cầu Hàm Rồng, ngày 4/4/1965.",
+  src:"VietnamPlus · VOV"},
+ {k:10, ans:"LÊ THỊ XUYẾN", cells:["L","Ê","T","H","I","X","U","Y","Ê","N"],
+  clue:"Hội trưởng đầu tiên của Hội Liên hiệp Phụ nữ Việt Nam, được bầu ngày 20/10/1946.",
+  src:"Báo Đại biểu Nhân dân · Hội LHPN Đắk Lắk"},
+ {k:1,  ans:"VÕ THỊ SÁU", cells:["V","O","T","H","I","S","A","U"],
+  clue:"Người con gái anh hùng ở huyện Đất Đỏ, tỉnh Bà Rịa – Vũng Tàu.",
+  src:"Bài giảng ô chữ 20/10, Violet"},
+ {k:9,  ans:"NGUYỄN THỊ ĐỊNH", cells:["N","G","U","Y","Ê","N","T","H","I","Đ","I","N","H"],
+  clue:"Nữ tướng đầu tiên của Quân đội nhân dân Việt Nam, được phong thiếu tướng tháng 4/1974.",
+  src:"Báo Nhân Dân · Báo Văn Hoá"},
+ {k:9,  ans:"HAI BÀ TRƯNG", cells:["H","A","I","B","A","T","R","Ư","N","G"],
+  clue:"Hai chị em khởi nghĩa năm 40 chống quân Đông Hán — hai nữ anh hùng đầu tiên của nước ta.",
+  src:"Kiddihub (đã sửa: năm 40 sau Công nguyên)"},
+ {k:4,  ans:"LÝ CHIÊU HOÀNG", cells:["L","Y","C","H","I","Ê","U","H","O","A","N","G"],
+  clue:"Nữ hoàng đế duy nhất trong lịch sử Việt Nam, nhường ngôi cho chồng là Trần Cảnh năm 1225.",
+  src:"Znews · VOH"}
+];
+var KEYWORD = "TÔN VINH";
+var activeRow = 0;
+
+var DEFAULT_STATE = {
+  names:["Đội Hoa Hồng","Đội Hướng Dương","Đội Thuỷ Tiên"],
+  errors:[[0,0,0],[0,0,0],[0,0,0]],
+  assign:null,
+  finalWinner:null,
+  open:[false,false,false,false,false,false,false],
+  keyOpen:false,
+  g2:[0,0,0]
+};
+var S = load();
+function load(){
+  try{ var raw=localStorage.getItem("gs2010"); if(raw) return Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), JSON.parse(raw)); }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+function save(){ try{ localStorage.setItem("gs2010", JSON.stringify(S)); }catch(e){} }
+
+/* ===================== TÍNH ĐIỂM ===================== */
+function totalErr(i){ return S.errors[i][0]+S.errors[i][1]+S.errors[i][2]; }
+function rank1(){
+  var idx=[0,1,2];
+  idx.sort(function(a,b){
+    if(totalErr(a)!==totalErr(b)) return totalErr(a)-totalErr(b);
+    if(S.errors[a][2]!==S.errors[b][2]) return S.errors[a][2]-S.errors[b][2];
+    if(S.errors[a][1]!==S.errors[b][1]) return S.errors[a][1]-S.errors[b][1];
+    return a-b;
+  });
+  var pts=[0,0,0], place=[0,0,0], give=[3,2,1];
+  for(var r=0;r<3;r++){ pts[idx[r]]=give[r]; place[idx[r]]=r+1; }
+  return {order:idx, pts:pts, place:place};
+}
+function finalPts(i){ return S.finalWinner===i ? 2 : 0; }
+function totalPts(i){ return rank1().pts[i] + finalPts(i); }
+function rankAll(){
+  var idx=[0,1,2];
+  idx.sort(function(a,b){
+    if(totalPts(a)!==totalPts(b)) return totalPts(b)-totalPts(a);
+    if(totalErr(a)!==totalErr(b)) return totalErr(a)-totalErr(b);
+    return a-b;
+  });
+  return idx;
+}
+function closedRows(){ var n=0; for(var i=0;i<7;i++) if(!S.open[i]) n++; return n; }
+function keyValue(){ var c=closedRows(); return c>=4 ? 3 : (c>=2 ? 2 : 1); }
+function grandTotal(i){ return totalPts(i) + (S.g2[i]||0); }
+function rankGrand(){
+  var idx=[0,1,2];
+  idx.sort(function(a,b){
+    if(grandTotal(a)!==grandTotal(b)) return grandTotal(b)-grandTotal(a);
+    if(totalErr(a)!==totalErr(b)) return totalErr(a)-totalErr(b);
+    return a-b;
+  });
+  return idx;
+}
+function played(){ return totalErr(0)+totalErr(1)+totalErr(2) > 0 || S.finalWinner!==null; }
+function nm(i){ return S.names[i] || ("Đội "+(i+1)); }
+function vidFor(t){ return S.assign ? VIDEOS[S.assign[t]] : null; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function photoBg(){ return '<div class="bg"><img src="assets/cover.png" alt=""><div class="scrim"></div></div>'; }
+
+/* ===================== SLIDE ===================== */
+function teamCards(){
+  var h="";
+  for(var i=0;i<3;i++){
+    h+='<div class="card" style="flex:1"><span class="step">'+(i+1)+'</span>'
+      +'<input class="tname" id="tn'+i+'" value="'+esc(nm(i))+'" aria-label="Tên đội '+(i+1)+'">'
+      +'<p class="muted" style="margin-top:6px">4 thành viên</p>'
+      +'<p style="font-size:22px"><span class="hl sage">3 bạn</span> thi Game 1 &nbsp;·&nbsp; <span class="hl sage">1 bạn</span> giữ cho Game 2</p></div>';
+  }
+  return h;
+}
+
+function counterPanel(team){
+  var h='<div class="counter"><p class="eyebrow" style="margin-bottom:2px">Bấm đếm lỗi</p>';
+  for(var L=0;L<3;L++){
+    h+='<div class="crow"><div class="lv"><b>Level '+(L+1)+'</b><span>Người chơi '+(L+1)+'</span></div>'
+      +'<button class="bq" data-act="dec" data-team="'+team+'" data-lv="'+L+'" aria-label="Bớt 1 lỗi Level '+(L+1)+'">−</button>'
+      +'<div class="cnt" id="c'+team+L+'">'+S.errors[team][L]+'</div>'
+      +'<button class="bq" data-act="inc" data-team="'+team+'" data-lv="'+L+'" aria-label="Thêm 1 lỗi Level '+(L+1)+'">+</button></div>';
+  }
+  h+='<div class="total"><span>TỔNG LỖI</span><b id="t'+team+'">'+totalErr(team)+'</b></div>'
+   +'<p class="muted" style="font-size:16px;line-height:1.45">Đọc sai, im lặng, hoặc trễ hẳn một nhịp — mỗi hình chỉ tính <b style="color:var(--rose)">1 lỗi</b>.</p></div>';
+  return h;
+}
+
+function videoSlide(team){
+  var v=vidFor(team), vid=v?v.id:"", lab=v?v.label:"chưa bốc thăm";
+  return { title:"Lượt thi — "+nm(team), dyn:"video"+team, html:
+      '<p class="eyebrow">Game 1 · Vòng 1 · Lượt '+(team+1)+' trên 3</p>'
+     +'<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">'
+     +'<h2 data-nm="'+team+'" style="font-size:54px">'+esc(nm(team))+'</h2>'
+     +'<span class="pill">'+esc(lab)+' · 1:41</span>'
+     +(vid?'<a class="btn ghost sm" href="https://www.youtube.com/watch?v='+vid+'" target="_blank" rel="noopener">Mở tab YouTube</a>':'')
+     +'</div>'
+     +'<div class="vidwrap"><div class="vidbox" data-vid="'+vid+'">'
+     +(vid?'':'<div class="vidph"><h3 style="color:#F0BDCC">Chưa bốc thăm video</h3><p class="muted">Quay lại slide “Bốc thăm” và bấm nút bốc.</p></div>')
+     +'</div>'+counterPanel(team)+'</div>' };
+}
+
+function standings1(){
+  var r=rank1(), h='<p class="eyebrow">Game 1 · Kết quả vòng 1</p><h2>Bảng lỗi và điểm vòng 1</h2>'
+   +'<table style="margin-top:24px"><tr><th>Đội</th><th class="n">Lv 1</th><th class="n">Lv 2</th><th class="n">Lv 3</th><th class="n">Tổng lỗi</th><th class="n">Hạng</th><th class="n">Điểm</th></tr>';
+  for(var k=0;k<3;k++){
+    var i=r.order[k];
+    h+='<tr class="'+(k===0?'lead':'')+'"><td>'+esc(nm(i))+'</td>'
+      +'<td class="n">'+S.errors[i][0]+'</td><td class="n">'+S.errors[i][1]+'</td><td class="n">'+S.errors[i][2]+'</td>'
+      +'<td class="n"><b style="font-size:30px;color:var(--rose)">'+totalErr(i)+'</b></td>'
+      +'<td class="n">'+r.place[i]+'</td>'
+      +'<td class="n"><b style="font-size:30px;color:var(--rose-deep)">'+r.pts[i]+'</b></td></tr>';
+  }
+  h+='</table><div class="flexfill"></div>'
+   + (played() ? '' : '<p class="muted" style="margin-bottom:10px">Chưa đội nào thi — bảng sẽ tự cập nhật khi quản trò bấm đếm lỗi.</p>')
+   +'<p class="muted"><span class="hl">Ít lỗi hơn thì hạng cao hơn.</span> Bằng lỗi thì xét Level 3 trước, rồi Level 2 — level khó hơn có trọng lượng hơn.</p>';
+  return {title:"Bảng điểm vòng 1", html:h, dyn:"standings1"};
+}
+
+function finalSlide(){
+  var h='<p class="eyebrow">Game 1 · Vòng chung kết · Đọc đồng thanh</p>'
+   +'<div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">'
+   +'<h2 style="font-size:54px">Ai trụ lại cuối cùng?</h2>'
+   +'<span class="pill gold">'+esc(FINAL.label)+'</span>'
+   +'<a class="btn ghost sm" href="https://www.youtube.com/watch?v='+FINAL.id+'" target="_blank" rel="noopener">Mở tab YouTube</a></div>'
+   +'<div class="vidwrap"><div class="vidbox" data-vid="'+FINAL.id+'"></div>'
+   +'<div class="counter"><p class="eyebrow" style="margin-bottom:2px">Đội thắng vòng này</p>';
+  for(var i=0;i<3;i++){
+    h+='<button class="btn '+(S.finalWinner===i?'':'ghost')+'" data-act="win" data-team="'+i+'" style="width:100%;text-align:center" id="w'+i+'">'+esc(nm(i))+'</button>';
+  }
+  h+='<div class="total" style="background:var(--gold)"><span style="color:#FFF3DC">THƯỞNG</span><b>+2</b></div>'
+   +'<button class="btn ghost sm" data-act="win" data-team="-1" style="width:100%">Xoá lựa chọn</button>'
+   +'<p class="muted" style="font-size:16px;line-height:1.45">Ba người đứng cùng, đọc cùng lúc. <b style="color:var(--rose)">Ai vấp trước thì ngồi xuống.</b></p></div></div>';
+  return {title:"Vòng chung kết Game 1", html:h, dyn:"finalSlide"};
+}
+
+function finalBoard(){
+  var r=rankAll(), r1=rank1();
+  var h='<p class="eyebrow">Game 1 · Tổng kết</p><h2>Bảng điểm sau Game 1</h2>'
+   +'<table style="margin-top:22px"><tr><th>Đội</th><th class="n">Tổng lỗi</th><th class="n">Điểm vòng 1</th><th class="n">Chung kết</th><th class="n">Tổng điểm</th></tr>';
+  for(var k=0;k<3;k++){
+    var i=r[k];
+    h+='<tr class="'+(k===0?'lead':'')+'"><td>'+esc(nm(i))+'</td><td class="n">'+totalErr(i)+'</td>'
+      +'<td class="n">'+r1.pts[i]+'</td>'
+      +'<td class="n">'+(finalPts(i)?'<b style="color:var(--gold);font-size:28px">+2</b>':'—')+'</td>'
+      +'<td class="n"><b style="font-size:36px;color:var(--rose)">'+totalPts(i)+'</b></td></tr>';
+  }
+  h+='</table><div class="flexfill"></div>'
+   +'<div class="card sage" style="flex-direction:row;align-items:center;gap:26px">'
+   +'<span class="step" style="width:62px;height:62px;font-size:30px">!</span>'
+   +'<div><h3 style="color:var(--sage)">Chưa trao giải ở đây</h3>'
+   +'<p style="font-size:23px;margin-top:6px">Đây mới là điểm sau Game 1. Giải Nhất / Nhì / Ba quyết sau khi cộng cả Game 2. Hoà sau <span class="hl sage">cả hai game</span> thì đội tổng lỗi ít hơn thắng.</p></div></div>';
+  return {title:"Tổng kết Game 1", html:h, dyn:"finalBoard"};
+}
+
+function xgridHTML(){
+  var maxk=0,i,j;
+  for(i=0;i<PUZZLE.length;i++) if(PUZZLE[i].k>maxk) maxk=PUZZLE[i].k;
+  var CW=52, GP=5, h='<div class="xgrid">';
+  for(i=0;i<PUZZLE.length;i++){
+    var r=PUZZLE[i], pad=(maxk-r.k)*(CW+GP), opened=S.open[i];
+    h+='<div class="xrow">';
+    h+='<button class="xno '+(activeRow===i?'cur':'')+' '+(opened?'done':'')+'" data-act="row" data-r="'+i+'">'+(i+1)+'</button>';
+    if(pad>0) h+='<div class="xpad" style="width:'+pad+'px"></div>';
+    for(j=0;j<r.cells.length;j++){
+      var isKey=(j===r.k-1);
+      var showIt = opened || (isKey && S.keyOpen);
+      h+='<div class="xc'+(isKey?' key':'')+(showIt?'':' hid')+'">'+esc(r.cells[j])+'</div>';
+    }
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+
+function xcluesHTML(){
+  var r=PUZZLE[activeRow];
+  return '<div class="xclue"><div class="qn">'+(activeRow+1)+'</div><div style="flex:1;min-width:0">'
+    +'<p style="font-size:26px;line-height:1.45">'+esc(r.clue)+'</p>'
+    +'<p class="muted" style="font-size:18px;margin-top:8px">'+r.cells.length+' ô'
+    + (S.open[activeRow] ? ' · Đáp án: <b style="color:var(--rose)">'+esc(r.ans)+'</b>' : '')
+    +' · Nguồn: '+esc(r.src)+'</p></div></div>';
+}
+
+function xbarHTML(){
+  var h='<div class="xbar">';
+  h+='<button class="btn sm" data-act="reveal">'+(S.open[activeRow]?'Đóng hàng '+(activeRow+1):'Mở hàng '+(activeRow+1))+'</button>';
+  h+='<button class="btn sm '+(S.keyOpen?'':'ghost')+'" data-act="keyopen" style="border-color:var(--gold);'
+    +(S.keyOpen?'background:var(--gold)':'color:var(--gold)')+'">'+(S.keyOpen?'Ẩn từ khoá':'Mở từ khoá')+'</button>';
+  h+='<span class="pill gold">Còn đóng '+closedRows()+' hàng · đoán đúng được +'+keyValue()+'</span>';
+  h+='</div><div class="xbar" style="margin-top:10px">';
+  h+='<span class="muted" style="font-size:18px">Điểm Game 2</span>';
+  for(var i=0;i<3;i++){
+    h+='<div class="g2t"><span class="nmx">'+esc(nm(i))+'</span>'
+      +'<button class="bq s" data-act="g2dec" data-team="'+i+'" aria-label="Bớt điểm '+esc(nm(i))+'">−</button>'
+      +'<span class="vx">'+(S.g2[i]||0)+'</span>'
+      +'<button class="bq s" data-act="g2inc" data-team="'+i+'" aria-label="Thêm điểm '+esc(nm(i))+'">+</button></div>';
+  }
+  return h+'</div></div>';
+}
+
+function puzzleSlide(){
+  return {title:"Ô chữ — Game 2", dyn:"puzzle", html:
+     '<div style="display:flex;align-items:baseline;gap:18px;flex-wrap:wrap">'
+    +'<p class="eyebrow" style="margin:0">Game 2 · Giải ô chữ</p>'
+    +'<p class="muted" style="font-size:19px">Bấm số hàng để đọc gợi ý · ô vàng là cột khoá</p></div>'
+    +'<div id="xzone" style="flex:1;display:flex;flex-direction:column;gap:16px;justify-content:center;min-height:0">'
+    + xgridHTML() + xcluesHTML() + xbarHTML() + '</div>'};
+}
+
+function g2Rules(){
+  return {title:"Luật Game 2", html:
+     '<p class="eyebrow">Game 2 · Luật chơi</p><h2>Bảy hàng ngang, một cột khoá</h2>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%">'
+    +'<div class="card" style="flex:1"><span class="step">1</span><h3>Đội bét chọn trước</h3>'
+      +'<p style="font-size:23px">Ba đội lần lượt chọn hàng, <span class="hl">đội đang xếp cuối sau Game 1 được chọn đầu tiên</span>. Bảy hàng chia cho ba đội nên đội bét được chọn thêm một lượt.</p></div>'
+    +'<div class="card key" style="flex:1"><span class="step">2</span><h3>15 giây suy nghĩ</h3>'
+      +'<p style="font-size:23px">Đội chọn hàng trả lời trước. Đúng <span class="hl">+1 điểm</span>. Sai hoặc hết giờ thì hai đội kia giành quyền, ai giơ tay nhanh hơn.</p></div>'
+    +'<div class="card gold" style="flex:1"><span class="step">3</span><h3 style="color:var(--gold)">Đoán từ khoá bất cứ lúc nào</h3>'
+      +'<p style="font-size:23px">Càng nhiều hàng còn đóng, đoán đúng <span class="hl gold">càng nhiều điểm</span>. Đây là chỗ lật kèo.</p></div>'
+    +'<div class="card sage" style="flex:1"><span class="step">4</span><h3 style="color:var(--sage)">Đoán sai không mất điểm</h3>'
+      +'<p style="font-size:23px">Chỉ bị khoá quyền đoán từ khoá cho đến khi mở thêm 2 hàng. <span class="hl sage">Hôm nay không phải ngày để ai mất điểm.</span></p></div>'
+    +'</div></div>'};
+}
+
+function g2Score(){
+  return {title:"Điểm từ khoá", cls:"tint", html:
+     '<p class="eyebrow">Game 2 · Cách tính điểm</p><h2>Đoán sớm được nhiều hơn</h2>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%;align-items:stretch">'
+    +'<div class="card" style="flex:1"><h3>Mỗi hàng ngang</h3>'
+      +'<div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">'
+      +'<div class="prow"><span>Trả lời đúng</span><b>+1</b></div>'
+      +'<div class="prow"><span>Bảy hàng, tối đa</span><b>+7</b></div></div>'
+      +'<p class="muted" style="font-size:19px;margin-top:10px">Bảy hàng chia cho ba đội, không đội nào ôm hết được.</p></div>'
+    +'<div class="card gold" style="flex:1.3"><h3 style="color:var(--gold)">Đoán đúng từ khoá</h3>'
+      +'<div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">'
+      +'<div class="prow g"><span>Còn đóng từ 4 hàng</span><b>+3</b></div>'
+      +'<div class="prow g"><span>Còn đóng 2–3 hàng</span><b>+2</b></div>'
+      +'<div class="prow"><span>Còn 1 hàng hoặc đã mở hết</span><b>+1</b></div></div></div>'
+    +'<div class="card sage" style="flex:1"><h3 style="color:var(--sage)">Vì sao vẫn lật được</h3>'
+      +'<p style="font-size:24px;margin-top:4px">Sau Game 1 hai đội cách nhau nhiều nhất <b>4 điểm</b>. Game 2 cho một đội tới <b>5–6 điểm</b>.</p>'
+      +'<p style="font-size:24px;margin-top:10px"><span class="hl sage">Đội đang bét vẫn vô địch được</span> — nhưng phải dám đoán sớm.</p></div>'
+    +'</div></div>'};
+}
+
+function grandFinal(){
+  var r=rankGrand(), medal=["Giải Nhất · 600.000đ","Giải Nhì · 500.000đ","Giải Ba · 400.000đ"];
+  var ties=[];
+  for(var q=0;q<2;q++) if(grandTotal(r[q])===grandTotal(r[q+1])) ties.push(q);
+  var h='<p class="eyebrow">Kết quả chung cuộc</p><h2>Tổng điểm cả hai game</h2>'
+   +'<table style="margin-top:20px"><tr><th>Đội</th><th class="n">Game 1</th><th class="n">Game 2</th><th class="n">Tổng</th><th>Giải thưởng</th></tr>';
+  for(var k=0;k<3;k++){
+    var i=r[k];
+    h+='<tr class="'+(k===0?'lead':'')+'"><td>'+esc(nm(i))+'</td>'
+      +'<td class="n">'+totalPts(i)+'</td><td class="n">'+(S.g2[i]||0)+'</td>'
+      +'<td class="n"><b style="font-size:38px;color:var(--rose)">'+grandTotal(i)+'</b></td>'
+      +'<td><span class="pill'+(k===0?' gold':'')+'">'+medal[k]+'</span></td></tr>';
+  }
+  h+='</table><div class="flexfill"></div>'
+   + (ties.length
+     ? '<div class="card gold" style="flex-direction:row;align-items:center;gap:24px">'
+       +'<span class="step" style="width:58px;height:58px;font-size:28px">=</span>'
+       +'<div><h3 style="color:var(--gold)">Hoà điểm — đã áp luật phụ</h3>'
+       + ties.map(function(q){
+           var a=r[q], b=r[q+1], pos=['Nhất và Nhì','Nhì và Ba'][q];
+           return '<p style="font-size:23px;margin-top:4px">Giải '+pos+' bằng '+grandTotal(a)+' điểm. '
+             +'Xếp theo <b>tổng lỗi Game 1 ít hơn</b>: <b style="color:var(--gold)">'+esc(nm(a))+'</b> '+totalErr(a)+' lỗi, '
+             +'đứng trên '+esc(nm(b))+' '+totalErr(b)+' lỗi.</p>';
+         }).join('')
+       +'</div></div>'
+     : '<p class="muted">Không có đội nào bằng điểm, thứ tự đã rõ. Nếu hoà, đội có tổng lỗi Game 1 ít hơn xếp trên.</p>');
+  return {title:"Trao giải", html:h, dyn:"grandFinal"};
+}
+
+function buildSlides(){
+  var sl=[];
+
+  /* 1 — bìa */
+  sl.push({title:"Chúc mừng 20/10", cls:"cover", html:
+     '<div class="pic"><img src="assets/cover.png" alt="Minh hoạ cô gái ôm bó hoa mừng Ngày Phụ nữ Việt Nam"><div class="fade"></div></div>'
+    +'<div class="txt">'
+    +'<p class="eyebrow" style="margin-bottom:12px">Ngày Phụ nữ Việt Nam · 20 tháng 10</p>'
+    +'<h1 style="font-size:86px;line-height:1">Game Show</h1>'
+    +'<p class="script" style="font-size:76px;line-height:1.1;margin-top:-2px">của phòng mình</p>'
+    +'<p style="font-size:26px;margin-top:26px;max-width:500px">Hai vòng thi · Ba đội · Mười hai người</p>'
+    +'<p style="font-size:26px;margin-top:8px;max-width:500px">Tổng giải thưởng <span class="hl gold">1.500.000đ</span></p>'
+    +'<p class="muted" style="margin-top:26px;font-size:19px">Bấm <b>→</b> để bắt đầu · <b>F</b> để toàn màn hình</p>'
+    +'</div>'});
+
+  /* 2 — lời chúc */
+  sl.push({title:"Lời chúc", cls:"photo", html: photoBg()+
+     '<div class="inner" style="justify-content:center;gap:30px;padding:0 40px">'
+    +'<p class="script" style="font-size:62px;line-height:1.1">Gửi mười hai người</p>'
+    +'<h1 style="font-size:70px;max-width:1280px;line-height:1.12">Một năm qua, phòng mình đi được đến hôm nay là nhờ những người đang ngồi đây.</h1>'
+    +'<div style="display:flex;gap:40px;max-width:1340px;margin-top:6px">'
+    +'<p style="font-size:26px;flex:1">Người nhớ giúp cả phòng những thứ chẳng ai nhớ nổi.</p>'
+    +'<p style="font-size:26px;flex:1">Người ở lại thêm một chút mà không đợi ai phải nhờ.</p>'
+    +'<p style="font-size:26px;flex:1">Người làm một ngày khó trở nên dễ thở hơn, chỉ bằng cách có mặt.</p>'
+    +'</div>'
+    +'<p style="font-size:30px;margin-top:14px;max-width:1280px">Hôm nay không nói chuyện công việc nữa. Chúc các chị em một ngày <span class="hl">được nghỉ, được chiều, và được nghe cảm ơn đủ nhiều.</span></p>'
+    +'</div>'});
+
+  /* 3 — chương trình */
+  sl.push({title:"Chương trình", html:
+     '<p class="eyebrow">Hôm nay chúng ta chơi gì</p><h2>Chương trình buổi 20/10</h2>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%">'
+    +'<div class="card" style="flex:1"><span class="step">01</span><h3>Chia đội &amp; bốc thăm</h3>'
+      +'<p style="font-size:23px">12 bạn chia thành <span class="hl">3 đội</span>, mỗi đội 4 người. Bốc thăm video công khai ngay trên sân khấu.</p>'
+      +'<span class="meta">khoảng 5 phút</span></div>'
+    +'<div class="card key" style="flex:1"><span class="step">02</span><h3>Game 1 — Nói theo nhịp</h3>'
+      +'<p style="font-size:23px">Ba lượt thi riêng, rồi một vòng chung kết <span class="hl">đọc đồng thanh loại trực tiếp</span>.</p>'
+      +'<span class="meta">khoảng 15–18 phút</span></div>'
+    +'<div class="card sage" style="flex:1"><span class="step">03</span><h3 style="color:var(--sage)">Game 2</h3>'
+      +'<p style="font-size:23px">Đang chuẩn bị. Điểm <span class="hl sage">hai game cộng lại</span> mới ra đội vô địch.</p>'
+      +'<span class="meta">sẽ cập nhật</span></div>'
+    +'<div class="card gold" style="flex:1"><span class="step">04</span><h3 style="color:var(--gold)">Trao giải</h3>'
+      +'<div style="display:flex;flex-direction:column;gap:7px;margin-top:2px">'
+      +'<div class="prow g"><span>Giải Nhất</span><b>600.000đ</b></div>'
+      +'<div class="prow"><span>Giải Nhì</span><b>500.000đ</b></div>'
+      +'<div class="prow"><span>Giải Ba</span><b>400.000đ</b></div></div>'
+      +'<span class="meta">chia đều cho 4 người</span></div>'
+    +'</div></div>'});
+
+  /* 4 — ba đội */
+  sl.push({title:"Ba đội", cls:"tint", html:
+     '<p class="eyebrow">12 người · 3 đội · 4 người mỗi đội</p><h2>Gọi tên ba đội</h2>'
+    +'<p class="muted" style="margin-top:12px">Bấm vào tên để sửa — mọi bảng điểm phía sau tự đổi theo.</p>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%;align-items:stretch">'+teamCards()+'</div></div>'});
+
+  /* 5 — giải thưởng */
+  sl.push({title:"Giải thưởng", html:
+     '<p class="eyebrow">Tổng giải thưởng 1.500.000đ</p><h2>Không đội nào ra về tay trắng</h2>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%;align-items:stretch">'
+    +'<div class="card gold" style="flex:1;gap:8px"><span class="pill gold">Giải Nhất</span>'
+      +'<div class="num" style="font-size:78px;color:var(--gold);margin-top:10px">600.000đ</div>'
+      +'<p style="font-size:23px">Mỗi người nhận <span class="hl gold">150.000đ</span></p></div>'
+    +'<div class="card" style="flex:1;gap:8px"><span class="pill">Giải Nhì</span>'
+      +'<div class="num" style="font-size:78px;margin-top:10px">500.000đ</div>'
+      +'<p style="font-size:23px">Mỗi người nhận <span class="hl">125.000đ</span></p></div>'
+    +'<div class="card sage" style="flex:1;gap:8px"><span class="pill">Giải Ba</span>'
+      +'<div class="num" style="font-size:78px;color:var(--sage);margin-top:10px">400.000đ</div>'
+      +'<p style="font-size:23px">Mỗi người nhận <span class="hl sage">100.000đ</span></p></div>'
+    +'</div></div>'
+    +'<p class="muted">Chênh lệch giữa nhất và ba chỉ <b style="color:var(--rose)">50.000đ mỗi người</b>. Chơi cho vui là chính — nhưng vẫn phải thắng.</p>'});
+
+  /* 6 — Game 1 */
+  sl.push({title:"Game 1", cls:"photo", html: photoBg()+
+     '<div class="inner" style="justify-content:center;gap:24px">'
+    +'<p class="eyebrow">Game 1</p>'
+    +'<h1 style="font-size:106px;max-width:1240px">Nói nhanh trên nhịp beat</h1>'
+    +'<p style="font-size:30px;max-width:1040px">Nhìn hình, đọc đúng chữ, đúng nhịp. Nghe thì dễ. Đến <span class="hl">Level 3</span> thì không ai còn cười nổi nữa.</p>'
+    +'<p class="muted" style="margin-top:8px">4 video · 3 lượt thi riêng + 1 vòng chung kết · khoảng 15–18 phút</p></div>'});
+
+  /* 7 — luật */
+  sl.push({title:"Luật Game 1", html:
+     '<p class="eyebrow">Game 1 · Luật chơi</p><h2>Ba người, ba level, một đội</h2>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%">'
+    +'<div class="card" style="flex:1"><span class="step">1</span><h3>Mỗi đội một video riêng</h3>'
+      +'<p style="font-size:23px">Bốc thăm công khai. Mỗi đội một video khác nhau nên <span class="hl">không ai nhìn được bài của ai</span>.</p></div>'
+    +'<div class="card key" style="flex:1"><span class="step">2</span><h3>Mỗi người một Level</h3>'
+      +'<p style="font-size:23px">Người 1 chơi Level 1, người 2 Level 2, người 3 Level 3. Hết level là <span class="hl">đổi người</span>, vấp hay không vẫn đổi.</p></div>'
+    +'<div class="card" style="flex:1"><span class="step">3</span><h3>Đếm lỗi, không tính giờ</h3>'
+      +'<p style="font-size:23px">Quản trò đếm lỗi cả ba người, cộng lại thành <span class="hl">tổng lỗi của đội</span>.</p></div>'
+    +'<div class="card sage" style="flex:1"><span class="step">4</span><h3 style="color:var(--sage)">Rồi tới chung kết</h3>'
+      +'<p style="font-size:23px">Mỗi đội cử một người, cả ba cùng đọc một video khó nhất. <span class="hl sage">Ai trụ lâu nhất thắng.</span></p></div>'
+    +'</div></div>'});
+
+  /* 8 — lỗi */
+  sl.push({title:"Thế nào là một lỗi", cls:"tint", html:
+     '<p class="eyebrow">Game 1 · Trọng tài</p><h2>Thế nào là một lỗi?</h2>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%;align-items:stretch">'
+    +'<div class="card key" style="flex:1"><h3>Tính là lỗi</h3>'
+      +'<ul style="font-size:25px;line-height:1.8;padding-left:22px;margin:4px 0 0"><li><span class="hl">Đọc sai chữ</span></li><li><span class="hl">Im lặng</span>, bỏ qua một hình</li><li><span class="hl">Trễ hẳn một nhịp</span></li></ul>'
+      +'<p class="muted" style="font-size:19px;margin-top:10px">Im lặng cũng là lỗi — nếu không, gặp từ khó ai cũng im để né.</p></div>'
+    +'<div class="card sage" style="flex:1"><h3 style="color:var(--sage)">Không tính là lỗi</h3>'
+      +'<ul style="font-size:25px;line-height:1.8;padding-left:22px;margin:4px 0 0"><li>Đọc hơi lắp nhưng <span class="hl sage">vẫn kịp nhịp</span></li><li>Cười mà vẫn đọc đúng</li><li>Giọng run, giọng nhỏ</li></ul>'
+      +'<p class="muted" style="font-size:19px;margin-top:10px">Một hình sai nhiều kiểu vẫn chỉ tính <b style="color:var(--sage)">1 lỗi</b>.</p></div>'
+    +'<div class="card gold" style="flex:1"><h3 style="color:var(--gold)">Ai phán?</h3>'
+      +'<p style="font-size:25px;margin-top:4px"><span class="hl gold">Một quản trò duy nhất</span>, quyết định cuối cùng, không tranh luận giữa lượt.</p>'
+      +'<p class="muted" style="font-size:19px;margin-top:10px">Ai thấy oan thì khiếu nại sau khi hết video.</p></div>'
+    +'</div></div>'});
+
+  /* 9 — thang điểm */
+  sl.push({title:"Thang điểm", html:
+     '<p class="eyebrow">Game 1 · Cách tính điểm</p><h2>Vòng 1 chia hạng, chung kết lật kèo</h2>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%;align-items:stretch">'
+    +'<div class="card" style="flex:1"><h3>Sau 3 video vòng 1</h3>'
+      +'<div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">'
+      +'<div class="prow"><span>Hạng Nhất — ít lỗi nhất</span><b>3 điểm</b></div>'
+      +'<div class="prow"><span>Hạng Nhì</span><b>2 điểm</b></div>'
+      +'<div class="prow"><span>Hạng Ba</span><b>1 điểm</b></div></div></div>'
+    +'<div class="card gold" style="flex:1"><h3 style="color:var(--gold)">Vòng chung kết</h3>'
+      +'<div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">'
+      +'<div class="prow g"><span>Đội thắng</span><b>+2 điểm</b></div>'
+      +'<div class="prow"><span>Hai đội còn lại</span><b>0</b></div></div>'
+      +'<p style="font-size:23px;margin-top:10px">Hai điểm đủ để đội hạng nhì <span class="hl gold">lật đội hạng nhất</span>.</p></div>'
+    +'<div class="card sage" style="flex:1"><h3 style="color:var(--sage)">Hoà thì sao?</h3>'
+      +'<p style="font-size:24px;margin-top:4px">Hoà sau Game 1 là chuyện bình thường — còn Game 2 để phân định.</p>'
+      +'<p style="font-size:24px;margin-top:10px">Chỉ khi hoà sau <b>cả hai game</b> mới dùng luật phụ: <span class="hl sage">đội tổng lỗi ít hơn thắng</span>.</p></div>'
+    +'</div></div>'});
+
+  /* 10 — bốc thăm */
+  sl.push({title:"Bốc thăm", cls:"tint", dyn:"draw", html:
+     '<p class="eyebrow">Game 1 · Bốc thăm công khai</p><h2>Đội nào vào video nào?</h2>'
+    +'<p class="muted" style="margin-top:12px">Ba video cùng một series, cùng dài <b style="color:var(--rose)">1 phút 41 giây</b>, cùng ba level. Bốc thăm để không ai chọn được phần dễ.</p>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="draw" style="width:100%" id="drawzone"></div></div>'
+    +'<div style="display:flex;gap:14px;justify-content:center">'
+    +'<button class="btn" data-act="draw">Bốc thăm</button>'
+    +'<button class="btn ghost" data-act="undraw">Bốc lại</button></div>'});
+
+  sl.push(videoSlide(0));
+  sl.push(videoSlide(1));
+  sl.push(videoSlide(2));
+  sl.push(standings1());
+
+  /* 15 — luật chung kết */
+  sl.push({title:"Luật chung kết", cls:"photo", html: photoBg()+
+     '<div class="inner" style="justify-content:center;gap:28px">'
+    +'<p class="eyebrow">Game 1 · Vòng chung kết</p>'
+    +'<h1 style="font-size:84px;max-width:1300px">Ba người. Một video. Đọc cùng lúc.</h1>'
+    +'<div class="row" style="margin-top:4px;gap:40px">'
+    +'<div style="flex:1"><h3 style="font-size:32px">Cách chơi</h3><p style="font-size:26px;margin-top:8px">Mỗi đội cử 1 người. Cả ba đứng lên cùng đọc to một lúc, <span class="hl">cùng nghe lần đầu</span>, không ai nhìn bài ai.</p></div>'
+    +'<div style="flex:1"><h3 style="font-size:32px">Loại trực tiếp</h3><p style="font-size:26px;margin-top:8px">Ai vấp trước thì <span class="hl">ngồi xuống</span>. Hai người còn lại đọc tiếp. Người trụ đến cuối cùng thắng.</p></div>'
+    +'<div style="flex:1"><h3 style="font-size:32px">Phần thưởng</h3><p style="font-size:26px;margin-top:8px">Đội của người thắng được <span class="hl">+2 điểm</span>. Hai đội còn lại không có điểm.</p></div>'
+    +'</div></div>'});
+
+  sl.push(finalSlide());
+  sl.push(finalBoard());
+
+  /* 18 — dự phòng */
+  sl.push({title:"Video dự phòng", html:
+     '<p class="eyebrow">Dành riêng cho quản trò</p><h2>Video dự phòng</h2>'
+    +'<p class="muted" style="margin-top:12px">Dùng khi có bạn đã xem qua video được bốc, hoặc khi cần thêm một lượt phụ.</p>'
+    +'<div class="flexfill" style="display:flex;align-items:center"><div class="row" style="width:100%;align-items:stretch">'
+    + SPARE.map(function(v){ return '<div class="card" style="flex:1;align-items:flex-start"><h3>'+esc(v.label)+'</h3>'
+        +'<p class="muted" style="font-size:20px">'+esc(v.note)+'</p>'
+        +'<a class="btn ghost sm" href="https://www.youtube.com/watch?v='+v.id+'" target="_blank" rel="noopener" style="margin-top:6px">Mở tab YouTube</a></div>'; }).join("")
+    +'</div></div>'
+    +'<div class="card gold" style="flex-direction:row;align-items:center;gap:24px">'
+    +'<span class="step" style="width:58px;height:58px;font-size:28px">!</span>'
+    +'<div><h3 style="color:var(--gold)">Nhớ xem trước</h3>'
+    +'<p style="font-size:23px;margin-top:4px">Bấm xem lướt cả 4 video chính một lượt trước buổi, để chắc không có từ nào lệch tông cho sự kiện của phòng.</p></div></div>'});
+
+  /* 19 — sang Game 2 */
+  sl.push({title:"Game 2", cls:"photo", html: photoBg()+
+     '<div class="inner" style="justify-content:center;align-items:center;text-align:center;gap:26px">'
+    +'<p class="eyebrow">Hết Game 1</p>'
+    +'<h1 style="font-size:88px;max-width:1240px">Game 2 bắt đầu ngay sau đây</h1>'
+    +'<p style="font-size:30px;max-width:1000px">Điểm hiện tại chưa phải kết quả. Đội đang dẫn vẫn có thể mất ngôi, đội đang bét vẫn còn cửa.</p>'
+    +'<p class="script" style="font-size:58px;margin-top:6px">Chưa ai thắng cả đâu</p></div>'});
+
+  /* 20-23 — Game 2 */
+  sl.push(g2Rules());
+  sl.push(g2Score());
+  sl.push(puzzleSlide());
+  sl.push(grandFinal());
+
+  /* 24 — cảm ơn */
+  sl.push({title:"Cảm ơn", cls:"photo", html: photoBg()+
+     '<div class="inner" style="justify-content:center;align-items:center;text-align:center;gap:26px">'
+    +'<p class="script" style="font-size:84px">Cảm ơn các chị em</p>'
+    +'<h1 style="font-size:66px;max-width:1180px">Chúc mừng Ngày Phụ nữ Việt Nam 20 tháng 10</h1>'
+    +'<p style="font-size:28px;max-width:960px">Mong năm nào phòng mình cũng ồn ào được như hôm nay.</p></div>'});
+
+  return sl;
+}
+
+/* ===================== CHẠY ===================== */
+var SLIDES=[], cur=0, stage=document.getElementById("stage");
+var BUILDERS={standings1:standings1, finalBoard:finalBoard, finalSlide:finalSlide,
+              video0:function(){return videoSlide(0);}, video1:function(){return videoSlide(1);}, video2:function(){return videoSlide(2);},
+              puzzle:puzzleSlide, grandFinal:grandFinal};
+
+function render(keep){
+  var prev=cur;
+  SLIDES=buildSlides();
+  stage.innerHTML = SLIDES.map(function(s,i){
+    return '<section class="slide '+(s.cls||'')+'" data-i="'+i+'"'+(s.dyn?' data-dyn="'+s.dyn+'"':'')+'>'+s.html+'</section>';
+  }).join("");
+  cur = (keep===undefined) ? prev : keep;
+  if(cur>=SLIDES.length) cur=SLIDES.length-1;
+  show(cur);
+}
+
+function show(i){
+  cur = Math.max(0, Math.min(SLIDES.length-1, i));
+  var secs = stage.querySelectorAll(".slide");
+  var dyn = secs[cur] && secs[cur].getAttribute("data-dyn");
+  /* dựng lại slide động khi hiện ra, trừ khi video đang chạy trong đó */
+  if(dyn && BUILDERS[dyn] && !secs[cur].querySelector("iframe")){
+    var fresh = BUILDERS[dyn]();
+    SLIDES[cur] = fresh;
+    secs[cur].innerHTML = fresh.html;
+  }
+  for(var k=0;k<secs.length;k++){
+    var on = (k===cur);
+    secs[k].classList.toggle("on", on);
+    var box = secs[k].querySelector(".vidbox[data-vid]");
+    if(box){
+      var vid = box.getAttribute("data-vid");
+      if(on && vid){
+        if(!box.querySelector("iframe")){
+          box.innerHTML = '<iframe src="https://www.youtube.com/embed/'+vid+'?rel=0&modestbranding=1&origin='+encodeURIComponent(location.origin)+'" title="Video thử thách nói theo nhịp" allow="autoplay; encrypted-media; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+        }
+      } else if(box.querySelector("iframe")){
+        box.innerHTML = "";
+      }
+    }
+  }
+  if(dyn==="draw" || secs[cur].querySelector("#drawzone")) drawZone();
+  document.getElementById("pos").textContent = (cur+1)+"/"+SLIDES.length;
+  document.getElementById("stitle").textContent = SLIDES[cur].title;
+}
+
+function renderPuzzle(){
+  var z = stage.querySelector("#xzone");
+  if(!z) return;
+  z.innerHTML = xgridHTML() + xcluesHTML() + xbarHTML();
+}
+
+function drawZone(){
+  var z = stage.querySelector("#drawzone");
+  if(!z) return;
+  var h="";
+  for(var i=0;i<3;i++){
+    var v=vidFor(i);
+    h+='<div class="drawcard '+(v?'done':'')+'"><div class="tn">'+esc(nm(i))+'</div>'
+      +'<div class="vv">'+(v?esc(v.label):'· · ·')+'</div>'
+      +'<p class="muted" style="font-size:19px">'+(v?'1:41 · Level 1–3':'chưa bốc')+'</p></div>';
+  }
+  z.innerHTML=h;
+}
+
+function fit(){ stage.style.transform = "scale("+Math.min(window.innerWidth/1600, window.innerHeight/900)+")"; }
+window.addEventListener("resize", fit);
+
+stage.addEventListener("click", function(e){
+  var b = e.target.closest ? e.target.closest("[data-act]") : null;
+  if(!b) return;
+  var act = b.getAttribute("data-act");
+  if(act==="inc" || act==="dec"){
+    var t=+b.getAttribute("data-team"), L=+b.getAttribute("data-lv");
+    S.errors[t][L] = Math.max(0, S.errors[t][L] + (act==="inc"?1:-1));
+    save();
+    var c=document.getElementById("c"+t+L); if(c) c.textContent=S.errors[t][L];
+    var tt=document.getElementById("t"+t); if(tt) tt.textContent=totalErr(t);
+    return;
+  }
+  if(act==="win"){
+    var w=+b.getAttribute("data-team");
+    S.finalWinner = (w<0 || S.finalWinner===w) ? null : w;
+    save();
+    for(var i=0;i<3;i++){ var el=document.getElementById("w"+i); if(el) el.classList.toggle("ghost", S.finalWinner!==i); }
+    return;
+  }
+  if(act==="row"){ activeRow = +b.getAttribute("data-r"); renderPuzzle(); return; }
+  if(act==="reveal"){ S.open[activeRow] = !S.open[activeRow]; save(); renderPuzzle(); return; }
+  if(act==="keyopen"){ S.keyOpen = !S.keyOpen; save(); renderPuzzle(); return; }
+  if(act==="g2inc" || act==="g2dec"){
+    var g=+b.getAttribute("data-team");
+    S.g2[g] = Math.max(0, (S.g2[g]||0) + (act==="g2inc"?1:-1));
+    save(); renderPuzzle(); return;
+  }
+  if(act==="draw"){
+    var a=[0,1,2];
+    for(var j=2;j>0;j--){ var k=Math.floor(Math.random()*(j+1)), tmp=a[j]; a[j]=a[k]; a[k]=tmp; }
+    S.assign=a; save(); render(); return;
+  }
+  if(act==="undraw"){ S.assign=null; save(); render(); return; }
+});
+
+stage.addEventListener("input", function(e){
+  if(!e.target.classList || !e.target.classList.contains("tname")) return;
+  var i=+e.target.id.replace("tn","");
+  S.names[i]=e.target.value; save();
+  var tags=stage.querySelectorAll('[data-nm="'+i+'"]');
+  for(var k=0;k<tags.length;k++) tags[k].textContent = nm(i);
+  var wb=document.getElementById("w"+i); if(wb) wb.textContent = nm(i);
+});
+stage.addEventListener("blur", function(e){
+  if(e.target.classList && e.target.classList.contains("tname")) render();
+}, true);
+
+document.addEventListener("keydown", function(e){
+  var t=e.target;
+  if(t && (t.tagName==="INPUT" || t.tagName==="TEXTAREA")) return;
+  if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){ e.preventDefault(); show(cur+1); }
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); show(cur-1); }
+  else if(e.key==="Home"){ show(0); }
+  else if(e.key==="End"){ show(SLIDES.length-1); }
+  else if(e.key==="f"||e.key==="F"){ toggleFs(); }
+  else if(e.key==="h"||e.key==="H"){ document.getElementById("bar").classList.toggle("hide"); }
+});
+function toggleFs(){
+  if(document.fullscreenElement) document.exitFullscreen();
+  else if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function(){});
+}
+document.getElementById("prev").onclick=function(){ show(cur-1); };
+document.getElementById("next").onclick=function(){ show(cur+1); };
+document.getElementById("fs").onclick=toggleFs;
+document.getElementById("hidebar").onclick=function(){ document.getElementById("bar").classList.add("hide"); };
+document.getElementById("reset").onclick=function(){ S=JSON.parse(JSON.stringify(DEFAULT_STATE)); save(); render(0); };
+
+/* YouTube từ chối nhúng khi trang mở bằng file:// — báo cho người dùng biết đường chạy đúng */
+if(location.protocol === "file:"){
+  var w=document.getElementById("warn");
+  w.innerHTML = '<b>Video sẽ không chạy được trong slide.</b> Trang đang mở bằng <code>file://</code>, YouTube chặn nhúng kiểu này (Error 153). '
+    + 'Hãy dùng bản đã deploy trên Vercel, hoặc chạy <code>bash chay-slide.sh</code> trong thư mục này. '
+    + 'Các nút “Mở tab YouTube” vẫn dùng được bình thường.'
+    + '<button id="warnx">Đã hiểu</button>';
+  w.hidden = false;
+  document.getElementById("warnx").onclick=function(){ w.hidden=true; };
+}
+
+render(0);
+fit();
+</script>
+</body>
+</html>
